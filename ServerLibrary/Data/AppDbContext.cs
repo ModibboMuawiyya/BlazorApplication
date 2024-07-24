@@ -16,6 +16,8 @@ namespace ServerLibrary.Data
         public DbSet<Town> Towns { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<GeneralDepartment> GeneralDepartments { get; set; }
+        public DbSet<SystemRole> SystemRoles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
     }
    
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BaseLibrary.DTOs
 {
-    public class LogIn : AccountBase
+    public class LogInDTO : AccountBase
     {
     }
 }

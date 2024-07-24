@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ServerLibrary.Data;
+using ServerLibrary.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             throw new InvalidOperationException("Sorry Your Connection string was not found"));
 });
 
+builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JWTSettings"));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
