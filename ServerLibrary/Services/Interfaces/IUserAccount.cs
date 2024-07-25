@@ -12,5 +12,7 @@ namespace ServerLibrary.Services.Interfaces
     {
         Task<GeneralResponse> CreateAsync(RegisterDTO User);
         Task<LogInResponse> SignInAsync(LogInDTO User);
+
+        Task<LogInResponse> RefreshTokenAsync(RefreshDTO token);
     }
 }

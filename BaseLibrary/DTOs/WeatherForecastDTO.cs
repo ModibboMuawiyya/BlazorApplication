@@ -1,6 +1,12 @@
-namespace Server
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BaseLibrary.DTOs
 {
-    public class WeatherForecast
+    public class WeatherForecastDTO
     {
         public DateOnly Date { get; set; }
 

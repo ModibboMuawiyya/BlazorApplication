@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using ServerLibrary.Data;
 using ServerLibrary.Helpers;
+using ServerLibrary.Services.Interfaces;
+using ServerLibrary.Services.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JWTSettings"));
+builder.Services.AddScoped<IUserAccount, UserAccountRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
