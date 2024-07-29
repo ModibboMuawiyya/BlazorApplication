@@ -6,7 +6,15 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <AuthorizeView>
+                <Authorized>
+                    <a class="btn btn-none text-danger" @onclick="LogoutClicked">Sign Out</a>
+                </Authorized>
+                <NotAuthorized>
+                    <a class="btn btn-none" href="identity/account/login">Sign In</a>
+                    <a class="btn btn-none" href="identity/account/register">Sign Up</a>
+                </NotAuthorized>
+            </AuthorizeView>            
         </div>
 
         <article class="content px-4">
@@ -14,3 +22,13 @@
         </article>
     </main>
 </div>
+
+@code{
+    async Task LogoutClicked()
+    {
+        var logoutModel = new UserDTO();
+        var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
+        await customAuthStateProvider.UpdateAuthenticationState(logoutModel);
+        NavManager.NavigateTo("/", forceLoad: true);
+    }
+}

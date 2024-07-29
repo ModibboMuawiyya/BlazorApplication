@@ -127,7 +127,7 @@ namespace ServerLibrary.Services.Repositories
                 issuer: config.Value.Issuer,
                 audience: config.Value.Audience,
                 claims: userClaims,
-                expires: DateTime.Now.AddDays(1),
+                expires: DateTime.Now.AddSeconds(2),
                 signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

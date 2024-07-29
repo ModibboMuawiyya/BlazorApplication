@@ -13,7 +13,7 @@ namespace ClientLibrary.Services.Repositories
 {
     public class UserAccountService(GetHttpClient getClient) : IUserAccountService
     {
-        public const string AuthUrl = "api/authentication";
+        public const string AuthUrl = "api/auth";
         public async Task<GeneralResponse> CreateAsync(RegisterDTO user)
         {
             var httpClient = getClient.GetPublicHttpClient();
@@ -32,9 +32,13 @@ namespace ClientLibrary.Services.Repositories
             return await result.Content.ReadFromJsonAsync<LogInResponse>()!;
         }
 
-        public Task<LogInResponse> RefreshTokenAsync(RefreshDTO user)
+        public async Task<LogInResponse> RefreshTokenAsync(RefreshDTO token)
         {
-            throw new NotImplementedException();
+            var httpClient = getClient.GetPublicHttpClient();
+            var result = await httpClient.PostAsJsonAsync($"{AuthUrl}/refresh-token", token);
+            if (!result.IsSuccessStatusCode) return new LogInResponse(false, "Error Occured");
+
+            return await result.Content.ReadFromJsonAsync<LogInResponse>()!;
         } 
         public async Task<WeatherForecastDTO[]> GetWeatherForecast()
         {
