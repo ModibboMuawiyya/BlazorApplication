@@ -1,5 +1,11 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ServerLibrary.Data;
+using ServerLibrary.Helpers;
+using ServerLibrary.Services.Interfaces;
+using ServerLibrary.Services.Repositories;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,11 +16,44 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JwtSettings"));
+var jwtSection = builder.Configuration.GetSection(nameof(JWTSettings)).Get<JWTSettings>();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
+        ValidIssuer = jwtSection!.Issuer,
+        ValidAudience = jwtSection!.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSection.SecretKey!))
+    };
+});
+
 //starting
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ??
             throw new InvalidOperationException("Sorry Your Connection string was not found"));
+});
+
+builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JWTSettings"));
+builder.Services.AddScoped<IUserAccount, UserAccountRepository>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazorWasm",
+        builder => builder
+        .WithOrigins("http://localhost:5166", "https://localhost:7128")
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials());
 });
 
 var app = builder.Build();
@@ -27,7 +66,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("AllowBlazorWasm");
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
